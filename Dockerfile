@@ -32,6 +32,14 @@ ENV am_ark_SessionName="Ark Server" \
     am_ark_RCONPort=32330 \
     am_arkwarnminutes=15
 
+# mounted as the directory to contain the server/backup/log/config files
 VOLUME /ark
+# mounted so that workshop (mod) downloads are persisted
+VOLUME /home/steam/Steam
+
+#steam query port
+EXPOSE 27015/udp
+#gameserver port
+EXPOSE 7777-7778/udp
 
 CMD [ "./run.sh" ]
