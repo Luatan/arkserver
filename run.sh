@@ -6,6 +6,10 @@ REPODIR="$(dirname "$SCRIPTDIR")"
 # always fail script if a cmd fails
 set -eo pipefail
 
+#timezone from api call if not set else use Environment Variable
+timezone=$(curl -s "https://ipapi.co/$(dig +short myip.opendns.com @resolver1.opendns.com)/timezone")
+[ -z "$(printenv TZ)" ] && sudo rm -rf /etc/localtime && sudo ln -s /usr/share/zoneinfo/$timezone /etc/localtime
+
 echo "###########################################################################"
 echo "# Ark Server - " `date`
 echo "###########################################################################"
@@ -118,7 +122,6 @@ if [[ $BACKUP_ONSTART = true ]]; then
 else
 	echo "Backup on start is not enabled."
 fi
-
 
 function stop {
 	arkmanager broadcast "Server is shutting down"
