@@ -1,9 +1,32 @@
-FROM thmhoag/steamcmd:latest
+FROM ubuntu:xenial
+
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    echo steam steam/question select "I AGREE" | debconf-set-selections && \
+    echo steam steam/license note '' | debconf-set-selections && \
+    apt-get install -y \
+    ca-certificates \
+    steamcmd \
+    language-pack-en \
+    curl \
+    cron \
+    bzip2 \
+    perl-modules \
+    lsof \
+    libc6-i386 \
+    lib32gcc1 \
+    sudo \
+    tzdata \
+    dnsutils \
+    && ln -s /usr/games/steamcmd /usr/local/bin \
+    && adduser --gecos "" --disabled-password steam
+
+WORKDIR /home/steam
+USER steam
+
+RUN steamcmd +quit
 
 USER root
-
-RUN apt-get update && \
-    apt-get install -y curl cron bzip2 perl-modules lsof libc6-i386 lib32gcc1 sudo nano tzdata dnsutils
 
 RUN curl -sL https://git.io/arkmanager | sudo bash -s steam && \
     ln -s /usr/local/bin/arkmanager /usr/bin/arkmanager
@@ -14,9 +37,8 @@ COPY run.sh /home/steam/run.sh
 COPY log.sh /home/steam/log.sh
 
 RUN mkdir /ark && \
-    chown -R steam:steam /home/steam/ /ark
-
-RUN echo "%sudo   ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers && \
+    chown -R steam:steam /home/steam/ /ark \
+    && echo "%sudo   ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers && \
     usermod -a -G sudo steam && \
     touch /home/steam/.sudo_as_admin_successful
 
