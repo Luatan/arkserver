@@ -1,13 +1,14 @@
-FROM ubuntu:xenial
+FROM ubuntu:latest
+
+#non interactive Shell
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN dpkg --add-architecture i386 && \
     apt-get update && \
     echo steam steam/question select "I AGREE" | debconf-set-selections && \
     echo steam steam/license note '' | debconf-set-selections && \
     apt-get install -y \
-    ca-certificates \
     steamcmd \
-    language-pack-en \
     curl \
     cron \
     bzip2 \
