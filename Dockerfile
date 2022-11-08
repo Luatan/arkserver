@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:xenial
 
 #non interactive Shell
 ENV DEBIAN_FRONTEND noninteractive
@@ -7,18 +7,7 @@ RUN dpkg --add-architecture i386 && \
     apt-get update && \
     echo steam steam/question select "I AGREE" | debconf-set-selections && \
     echo steam steam/license note '' | debconf-set-selections && \
-    apt-get install -y \
-    steamcmd \
-    curl \
-    cron \
-    bzip2 \
-    perl-modules \
-    lsof \
-    libc6-i386 \
-    lib32gcc1 \
-    sudo \
-    tzdata \
-    dnsutils \
+    apt-get install -y steamcmd curl cron bzip2 perl-modules lsof libc6-i386 lib32gcc1 sudo tzdata dnsutils ca-certificates language-pack-en \
     && ln -s /usr/games/steamcmd /usr/local/bin \
     && adduser --gecos "" --disabled-password steam
 
@@ -29,7 +18,7 @@ RUN steamcmd +quit
 
 USER root
 
-RUN curl -sL https://git.io/arkmanager | sudo bash -s steam && \
+RUN curl -sL https://git.io/arkmanager | bash -s steam && \
     ln -s /usr/local/bin/arkmanager /usr/bin/arkmanager
 
 COPY arkmanager/arkmanager.cfg /etc/arkmanager/arkmanager.cfg
@@ -53,7 +42,8 @@ ENV am_ark_SessionName="Ark Server" \
     am_ark_QueryPort=27015 \
     am_ark_Port=7778 \
     am_ark_RCONPort=32330 \
-    am_arkwarnminutes=15
+    am_arkwarnminutes=15 \
+    TZ=CEST
 
 # mounted as the directory to contain the server/backup/log/config files
 VOLUME /ark
